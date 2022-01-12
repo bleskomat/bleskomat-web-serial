@@ -1,0 +1,42 @@
+{
+  "name": "bleskomat-web-serial",
+  "version": "1.0.0",
+  "description": "Connect to a Bleskomat hardware device via WebSerial to listen to serial monitor, flash firmware, and verify md5 checksum.",
+  "main": null,
+  "private": true,
+  "scripts": {
+    "build": "make clean all",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/core": "7.16.7",
+    "@babel/preset-env": "7.16.7",
+    "@toit/esptool.js": "0.12.3",
+    "babelify": "10.0.0",
+    "browserify": "17.0.0",
+    "crypto-js": "4.1.1",
+    "http-server": "14.0.0",
+    "uglify-js": "3.14.5"
+  },
+  "author": {
+    "name": "Samotari",
+    "email": "samotari@bleskomat.com",
+    "url": "https://github.com/samotari"
+  },
+  "contributors": [
+    {
+      "name": "Charles Hill",
+      "email": "chill@degreesofzero.com"
+    },
+    {
+      "name": "Carlos Garcia Ortiz",
+      "email": "yo@carlosgarciaortiz.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samotari/bleskomat-web-serial.git"
+  },
+  "license": "UNLICENSED"
+}
