@@ -37,6 +37,9 @@ module.exports = function () {
     this.options = Object.assign({
       baudRate: 115200,
       debug: true,
+      flashBaudRate: 460800,
+      flashOffset: 0x10000,
+      flashPartitionName: 'app0',
       flashSize: 8 * 1024 * 1024,
       logger: console,
       productId: 0xea60,
@@ -152,22 +155,17 @@ module.exports = function () {
         return loader.loadStub().then(function () {
           var _this4$options = _this4.options,
               baudRate = _this4$options.baudRate,
+              flashBaudRate = _this4$options.flashBaudRate,
+              flashOffset = _this4$options.flashOffset,
+              flashPartitionName = _this4$options.flashPartitionName,
               logger = _this4$options.logger;
-          return loader.setBaudRate(baudRate, 460800).then(function () {
-            // See:
-            // https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/partition-tables.html
-            // From huge_app.csv:
-            // # Name,   Type, SubType, Offset,  Size, Flags
-            // nvs,	  data, nvs,	 0x9000,  0x5000,
-            // otadata,  data, ota,	 0xe000,  0x2000,
-            // app0,	 app,  ota_0,   0x10000, 0x300000,
-            // spiffs,   data, spiffs,  0x310000,0xF0000,
+          return loader.setBaudRate(baudRate, flashBaudRate).then(function () {
             var partitions = [{
-              name: 'app0',
+              name: flashPartitionName,
               // String
               data: firmwareUint8Array,
               // Uint8Array
-              offset: 0x10000 // Number
+              offset: flashOffset // Number
 
             }];
             logger.log('Flashing device...');
