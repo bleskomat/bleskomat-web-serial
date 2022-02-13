@@ -1,6 +1,6 @@
 {
   "name": "bleskomat-web-serial",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Connect to a Bleskomat hardware device via WebSerial to listen to serial monitor, flash firmware, and verify md5 checksum.",
   "main": null,
   "private": true,
