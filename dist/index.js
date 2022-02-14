@@ -38,8 +38,6 @@ module.exports = function () {
       baudRate: 115200,
       debug: true,
       flashBaudRate: 460800,
-      flashOffset: 0x10000,
-      flashPartitionName: 'app0',
       flashSize: 8 * 1024 * 1024,
       logger: console,
       productId: 0xea60,
@@ -76,44 +74,58 @@ module.exports = function () {
 
     return Promise.resolve().then(function () {
       // Disconnect if already connected.
+      var logger = _this2.options.logger;
       return (_this2.connected && _this2.disconnect() || Promise.resolve()).then(function () {
         return _this2.getSerialPort().then(function (port) {
           if (!port) {
-            throw new Error('USB device not found');
+            throw new Error('Device not found');
           }
 
           _this2.port = port;
           var baudRate = _this2.options.baudRate;
           return port.open({
             baudRate: baudRate
-          }).then(function () {
-            var _this2$options = _this2.options,
-                flashSize = _this2$options.flashSize,
-                debug = _this2$options.debug,
-                logger = _this2$options.logger;
-            var loader = new EspLoader(port, {
-              flashSize: flashSize,
-              debug: debug,
-              logger: logger
-            });
-            _this2.loader = loader;
-            logger.log('connecting...');
-            return loader.connect().then(function () {
-              logger.log('connected');
-              return loader.chipName().then(function (chipName) {
-                _this2.chipName = chipName;
-                logger.log("chip: \"".concat(chipName, "\""));
-                return loader.macAddr().then(function (macAddr) {
-                  _this2.macAddr = macAddr;
-                  logger.log("mac address: \"".concat(macAddr, "\""));
-                });
+          })["catch"](function (error) {
+            // Ignore port already open error.
+            if (!/port is already open/.test(error.message)) {
+              // Re-throw any other error.
+              throw error;
+            }
+          });
+        }).then(function () {
+          var port = _this2.port;
+
+          if (!port.readable) {
+            throw new Error('Device not found');
+          }
+
+          var _this2$options = _this2.options,
+              flashSize = _this2$options.flashSize,
+              debug = _this2$options.debug;
+          var loader = new EspLoader(port, {
+            flashSize: flashSize,
+            debug: debug,
+            logger: logger
+          });
+          _this2.loader = loader;
+          logger.log('connecting...');
+          return loader.connect().then(function () {
+            logger.log('connected');
+            return loader.chipName().then(function (chipName) {
+              _this2.chipName = chipName;
+              logger.log("chip: \"".concat(chipName, "\""));
+              return loader.macAddr().then(function (macAddr) {
+                _this2.macAddr = macAddr;
+                logger.log("mac address: \"".concat(macAddr, "\""));
               });
             });
           });
         }).then(function () {
+          console.log('connected!');
           _this2.connected = true;
         })["catch"](function (error) {
-          throw new Error("Failed to connect to Bleskomat: ".concat(error.message));
+          var errorMessage = error instanceof Error ? error.message : error;
+          throw new Error("Failed to connect to Bleskomat: ".concat(errorMessage));
         });
       });
     });
@@ -134,40 +146,61 @@ module.exports = function () {
     });
   };
 
-  Serial.prototype.flash = function (firmware) {
+  Serial.prototype.flash = function (partitions) {
     var _this4 = this;
 
     return Promise.resolve().then(function () {
-      var firmwareUint8Array;
-
-      if (typeof firmware === 'string') {
-        firmwareUint8Array = new Uint8Array(Buffer.from(firmware, 'base64'));
-      } else {
-        firmwareUint8Array = firmware;
+      if (!partitions) {
+        throw new Error('Missing required argument: "partitions"');
       }
 
-      if (!(firmwareUint8Array instanceof Uint8Array)) {
-        throw new Error('Invalid argument ("firmware"): Uint8Array or base64-encoded String expected');
+      if (!(partitions instanceof Array)) {
+        throw new Error('Invalid argument ("partitions"): Array expected');
       }
 
+      partitions = partitions.map(function (partition) {
+        var data = partition.data,
+            name = partition.name,
+            offset = partition.offset;
+
+        if (!name) {
+          throw new Error('Invalid argument ("partitions"): Missing "name"');
+        }
+
+        if (typeof name !== 'string') {
+          throw new Error('Invalid argument ("partitions"): Invalid parameter "name": String expected');
+        }
+
+        if (!data) {
+          throw new Error('Invalid argument ("partitions"): Missing "data"');
+        }
+
+        if (typeof data === 'string') {
+          partition.data = data = new Uint8Array(Buffer.from(data, 'base64'));
+        }
+
+        if (!(data instanceof Uint8Array)) {
+          throw new Error('Invalid argument ("partitions"): Invalid parameter "data": Uint8Array or base64-encoded String expected');
+        }
+
+        if (typeof offset === 'undefined') {
+          throw new Error('Invalid argument ("partitions"): Missing "offset"');
+        }
+
+        if (!Number.isInteger(offset)) {
+          throw new Error('Invalid argument ("partitions"): Invalid parameter "offset": Integer expected');
+        }
+
+        return partition;
+      });
       return _this4.connect().then(function () {
         var loader = _this4.loader;
         return loader.loadStub().then(function () {
           var _this4$options = _this4.options,
               baudRate = _this4$options.baudRate,
               flashBaudRate = _this4$options.flashBaudRate,
-              flashOffset = _this4$options.flashOffset,
-              flashPartitionName = _this4$options.flashPartitionName,
               logger = _this4$options.logger;
           return loader.setBaudRate(baudRate, flashBaudRate).then(function () {
-            var partitions = [{
-              name: flashPartitionName,
-              // String
-              data: firmwareUint8Array,
-              // Uint8Array
-              offset: flashOffset // Number
-
-            }];
             logger.log('Flashing device...');
             return executePromisesInSeries(partitions.map(function (partition) {
               return function () {
