@@ -20,15 +20,10 @@
     "uglify-js": "3.14.5"
   },
   "author": {
-    "name": "Samotari",
-    "email": "samotari@bleskomat.com",
-    "url": "https://github.com/samotari"
+    "name": "Charles Hill",
+    "email": "chill@degreesofzero.com"
   },
   "contributors": [
-    {
-      "name": "Charles Hill",
-      "email": "chill@degreesofzero.com"
-    },
     {
       "name": "Carlos Garcia Ortiz",
       "email": "yo@carlosgarciaortiz.com"
@@ -36,7 +31,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/samotari/bleskomat-web-serial.git"
+    "url": "git+https://github.com/bleskomat/bleskomat-web-serial.git"
   },
   "license": "UNLICENSED"
 }
