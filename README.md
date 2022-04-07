@@ -16,3 +16,11 @@ npm ci
 ```bash
 npm run build
 ```
+
+## Manual Testing
+
+Run the following command to prepare manual testing web files and start a local web server:
+```bash
+npm run test:manual
+```
+Then open your browser to [localhost:8080](http://localhost:8080).

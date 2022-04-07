@@ -1,0 +1,33 @@
+<html>
+<head>
+	<title>Manual Testing - Bleskomat Web Serial</title>
+</head>
+<body>
+
+	<h1>Manual Testing - Bleskomat Web Serial</h1>
+	<p>Connect a Bleskomat hardware device to your computer via USB.</p>
+	<div class="form">
+		<form action="#">
+			<div class="form-row">
+				<textarea class="form-input" id="log" style="width: 100%; max-width: 60rem;" rows="20"></textarea>
+			</div>
+			<br>
+			<div class="form-row">
+				<div class="form-label"><label>Firmware file (.bin)</label></div>
+				<div class="form-input"><input name="loadFromFile" type="file"></div>
+			</div>
+			<br>
+			<div class="form-buttons">
+				<button id="clear-button">Clear</button>
+				<button id="monitor-button">Monitor</button>
+				<button id="flash-button">Flash</button>
+				<button id="checkmd5sum-button">Check MD5Sum</button>
+			</div>
+		</form>
+	</div>
+
+	<script src="/js/dist/index.js"></script>
+	<script src="/js/app.js"></script>
+
+</body>
+</html>

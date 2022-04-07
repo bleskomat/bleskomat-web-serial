@@ -121,7 +121,6 @@ module.exports = function () {
             });
           });
         }).then(function () {
-          console.log('connected!');
           _this2.connected = true;
         })["catch"](function (error) {
           var errorMessage = error instanceof Error ? error.message : error;

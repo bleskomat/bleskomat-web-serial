@@ -9,6 +9,8 @@ BIN=./node_modules/.bin
 DIST=./dist
 DIST_INDEX_JS=$(DIST)/index.js
 DIST_INDEX_MIN_JS=$(DIST)/index.min.js
+PUBLIC=./public
+TEST=./test
 
 # Targets
 #
@@ -25,7 +27,8 @@ DIST_INDEX_MIN_JS=$(DIST)/index.min.js
 # it as phony ensures that it always run, even if a file by the same name
 # exists.
 .PHONY: all\
-clean
+clean\
+test
 
 all: $(DIST_INDEX_JS) \
 $(DIST_INDEX_MIN_JS)
@@ -50,3 +53,10 @@ $(DIST_INDEX_JS): lib/index.js $(EXPORTS_FILES) $(DEPS_JS_FILES)
 
 $(DIST_INDEX_MIN_JS): $(DIST_INDEX_JS)
 	$(BIN)/uglifyjs $^ -o $@
+
+test:
+	rm -rf $(PUBLIC)/test
+	mkdir -p $(PUBLIC)/test
+	cp -r $(TEST)/manual $(PUBLIC)/test/manual
+	mkdir -p $(PUBLIC)/test/manual/js/dist
+	cp $(DIST)/index*.js $(PUBLIC)/test/manual/js/dist/
