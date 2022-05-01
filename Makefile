@@ -9,6 +9,7 @@ BIN=./node_modules/.bin
 DIST=./dist
 DIST_INDEX_JS=$(DIST)/index.js
 DIST_INDEX_MIN_JS=$(DIST)/index.min.js
+EXPORTS=./exports
 PUBLIC=./public
 TEST=./test
 
@@ -28,16 +29,19 @@ TEST=./test
 # exists.
 .PHONY: all\
 clean\
+partitionData\
 test
 
-all: $(DIST_INDEX_JS) \
+all: partitionData\
+$(DIST_INDEX_JS)\
 $(DIST_INDEX_MIN_JS)
 
 clean:
 	# Delete build process output files:
 	rm -rf $(DIST)
+	rm -f $(EXPORTS)/partitionData/index.js
 
-EXPORTS_FILES=exports/*.js
+EXPORTS_FILES=$(EXPORTS)/*.js
 DEPS_JS_FILES=node_modules/@toit/esptool.js/build/*.js\
 node_modules/crypto-js/core.js\
 node_modules/crypto-js/enc-base64.js\
@@ -53,6 +57,22 @@ $(DIST_INDEX_JS): lib/index.js $(EXPORTS_FILES) $(DEPS_JS_FILES)
 
 $(DIST_INDEX_MIN_JS): $(DIST_INDEX_JS)
 	$(BIN)/uglifyjs $^ -o $@
+
+
+$(EXPORTS)/partitionData/index.js: $(EXPORTS)/partitionData/bootloader.bin\
+$(EXPORTS)/partitionData/otaSlot.bin\
+$(EXPORTS)/partitionData/partitionsTable.bin
+	node -e "\
+		const fs = require('fs');\
+		const partitionDataJson = JSON.stringify({\
+			bootloader: fs.readFileSync('exports/partitionData/bootloader.bin', 'base64'),\
+			otaSlot: fs.readFileSync('exports/partitionData/otaSlot.bin', 'base64'),\
+			partitionsTable: fs.readFileSync('exports/partitionData/partitionsTable.bin', 'base64'),\
+		});\
+		fs.writeFileSync('exports/partitionData/index.js', 'module.exports = ' + partitionDataJson);\
+	"
+
+partitionData: $(EXPORTS)/partitionData/index.js
 
 test:
 	rm -rf $(PUBLIC)/test

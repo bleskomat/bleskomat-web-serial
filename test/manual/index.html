@@ -17,9 +17,21 @@
 				<div class="form-input"><input name="loadFromFile" type="file"></div>
 			</div>
 			<br>
+			<div class="form-row">
+				<div class="form-label"><label>JSON-RPC command:</label></div>
+				<div class="form-input">
+					<select name="json-rpc-method">
+						<option value="echo">echo</option>
+						<option value="getinfo">getinfo</option>
+						<option value="getconfig">getconfig</option>
+					</select>
+					<button id="json-rpc-send-button">send</button>
+				</div>
+			</div>
+			<br>
 			<div class="form-buttons">
 				<button id="clear-button">Clear</button>
-				<button id="monitor-button">Monitor</button>
+				<button id="connect-button">Connect</button>
 				<button id="flash-button">Flash</button>
 				<button id="checkmd5sum-button">Check MD5Sum</button>
 			</div>
