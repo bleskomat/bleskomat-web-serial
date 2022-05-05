@@ -89,6 +89,9 @@ var partitionData = function () {
 
 var util = require('../exports/util');
 
+var _require = require('../package.json'),
+    version = _require.version;
+
 var clientIncrement = 0;
 
 module.exports = function () {
@@ -175,10 +178,6 @@ module.exports = function () {
 
         return port;
       }).then(function (port) {
-        console.log({
-          port: port
-        });
-
         if (port && options.open) {
           // Port found and we want to open it.
           var baudRate = _this2.options.baudRate;
@@ -557,7 +556,7 @@ module.exports = function () {
     return Uint8Array.from(bytes);
   };
 
-  Serial.prototype.cmd = function (method, params) {
+  Serial.prototype.cmd = function (method, params, options) {
     var _this9 = this;
 
     return Promise.resolve().then(function () {
@@ -565,6 +564,9 @@ module.exports = function () {
       assert.strictEqual(_typeof(method), 'string', 'Invalid argument ("method"): String expected');
       assert.ok(!params || _typeof(params) === 'object' || params instanceof Array, 'Invalid argument ("params"): Array or Object expected');
       params = params || [];
+      options = Object.assign({
+        timeout: 500
+      }, options || {});
       var port = _this9.port;
       assert.ok(port && port.writable, 'Device not connected');
       assert.ok(!port.writable.locked, 'Device is busy');
@@ -587,11 +589,17 @@ module.exports = function () {
       return new Promise(function (resolve, reject) {
         try {
           var done = function done(error, result) {
+            clearTimeout(timeout);
+
             _this9.removeListener('message', onMessage);
 
             if (error) return reject(error);
             resolve(result);
           };
+
+          var timeout = setTimeout(function () {
+            done(new Error('Timed-out while waiting for JSON-RPC response'));
+          }, options.timeout);
 
           var onMessage = function onMessage(message) {
             var json;
@@ -665,10 +673,11 @@ module.exports = function () {
   Serial.CryptoJS = CryptoJS;
   Serial.esptool = esptool;
   Serial.partitionData = partitionData;
+  Serial.version = version;
   return Serial;
 }();
 
-},{"../exports/Buffer":1,"../exports/CryptoJS":2,"../exports/assert":3,"../exports/esptool":4,"../exports/events":5,"../exports/partitionData":6,"../exports/util":7}],9:[function(require,module,exports){
+},{"../exports/Buffer":1,"../exports/CryptoJS":2,"../exports/assert":3,"../exports/esptool":4,"../exports/events":5,"../exports/partitionData":6,"../exports/util":7,"../package.json":48}],9:[function(require,module,exports){
 "use strict";
 // Copyright (C) 2021 Toitware ApS. All rights reserved.
 // Use of this source code is governed by an MIT-style license that can be
@@ -8900,5 +8909,45 @@ module.exports = function whichTypedArray(value) {
 };
 
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"available-typed-arrays":18,"call-bind/callBound":22,"es-abstract/helpers/getOwnPropertyDescriptor":27,"foreach":29,"has-tostringtag/shams":35,"is-typed-array":41}]},{},[8])(8)
+},{"available-typed-arrays":18,"call-bind/callBound":22,"es-abstract/helpers/getOwnPropertyDescriptor":27,"foreach":29,"has-tostringtag/shams":35,"is-typed-array":41}],48:[function(require,module,exports){
+module.exports={
+  "name": "bleskomat-web-serial",
+  "version": "1.2.0",
+  "description": "Connect to a Bleskomat hardware device via WebSerial to listen to serial monitor, flash firmware, and verify md5 checksum.",
+  "main": null,
+  "private": true,
+  "scripts": {
+    "build": "make clean all",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:manual": "npm run build && make test && ./node_modules/.bin/http-server ./public/test/manual"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/core": "7.17.10",
+    "@babel/preset-env": "7.17.10",
+    "@toit/esptool.js": "0.12.3",
+    "babelify": "10.0.0",
+    "browserify": "17.0.0",
+    "crypto-js": "4.1.1",
+    "http-server": "14.1.0",
+    "uglify-js": "3.15.4"
+  },
+  "author": {
+    "name": "Charles Hill",
+    "email": "chill@degreesofzero.com"
+  },
+  "contributors": [
+    {
+      "name": "Carlos Garcia Ortiz",
+      "email": "yo@carlosgarciaortiz.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bleskomat/bleskomat-web-serial.git"
+  },
+  "license": "UNLICENSED"
+}
+
+},{}]},{},[8])(8)
 });

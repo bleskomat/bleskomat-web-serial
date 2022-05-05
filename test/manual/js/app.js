@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	buttons['checkmd5sum'] && buttons['checkmd5sum'].addEventListener('click', event => {
 		event.preventDefault();
 		return loadFirmwareFromFile().then(firmwareUint8Array => {
-			const addr = 0x10000;
+			const addr = bleskomat.options.partitions.firmware.offset;
 			const size = firmwareUint8Array.byteLength;
 			return bleskomat.calculateFlashMD5Sum(addr, size).then(actual => {
 				const expected = md5sum(Buffer.from(firmwareUint8Array).toString('base64'));
