@@ -68,8 +68,8 @@ $(EXPORTS)/partitionData/partitionsTable.bin
 			bootloader: fs.readFileSync('exports/partitionData/bootloader.bin', 'base64'),\
 			otaSlot: fs.readFileSync('exports/partitionData/otaSlot.bin', 'base64'),\
 			partitionsTable: fs.readFileSync('exports/partitionData/partitionsTable.bin', 'base64'),\
-		});\
-		fs.writeFileSync('exports/partitionData/index.js', 'module.exports = ' + partitionDataJson);\
+		}, null, 2).replace(/ {2,}/g, '\t');\
+		fs.writeFileSync('exports/partitionData/index.js', 'module.exports = ' + partitionDataJson + ';\n');\
 	"
 
 partitionData: $(EXPORTS)/partitionData/index.js
