@@ -241,8 +241,7 @@ module.exports = function () {
 
     return Promise.resolve().then(function () {
       options = Object.assign({
-        open: true,
-        loader: false,
+        listen: true,
         reconnect: false
       }, options || {});
       assert.ok(!_this3.connected || options.reconnect, 'Already connected');
@@ -252,39 +251,93 @@ module.exports = function () {
           return _this3.disconnect();
         }
       }).then(function () {
-        return _this3.getSerialPort(options);
+        return _this3.getSerialPort({
+          open: true
+        });
       }).then(function (port) {
         assert.ok(port, 'Device not found');
         assert.notStrictEqual(port.readable, null, 'Device port not readable');
+        var _this3$options = _this3.options,
+            flashSize = _this3$options.flashSize,
+            debug = _this3$options.debug;
+        var logger = _this3.logger;
+        var loader = new EspLoader(port, {
+          flashSize: flashSize,
+          debug: debug,
+          logger: logger
+        });
 
-        if (options.loader) {
-          var _this3$options = _this3.options,
-              flashSize = _this3$options.flashSize,
-              debug = _this3$options.debug;
-          var logger = _this3.logger;
-          var loader = _this3.loader = new EspLoader(port, {
-            flashSize: flashSize,
-            debug: debug,
-            logger: logger
+        _this3.logger.log('Connecting EspLoader...');
+
+        var interval = setInterval(function () {
+          _this3.logger.log('Try to press and hold the FLASH/EN/RST button on the device. Then press and release the BOOT button.');
+        }, 5000);
+        return loader.connect().then(function () {
+          return loader.chipName().then(function (chipName) {
+            _this3.logger.log("Chip Name: \"".concat(chipName, "\""));
           });
-
-          _this3.logger.log('Connecting ESPTool loader...');
-
-          return loader.connect().then(function () {
-            return loader.chipName().then(function (chipName) {
-              _this3.logger.log("Chip Name: \"".concat(chipName, "\""));
-            });
-          }).then(function () {
-            return loader.macAddr().then(function (macAddr) {
-              _this3.logger.log("Mac Address: \"".concat(macAddr, "\""));
-            });
-          }).then(function () {
-            _this3.connected = true;
-
-            _this3.logger.log('Connected!');
+        }).then(function () {
+          return loader.macAddr().then(function (macAddr) {
+            _this3.logger.log("Mac Address: \"".concat(macAddr, "\""));
           });
-        }
+        }).then(function () {
+          _this3.loader = loader;
+          _this3.connected = true;
+
+          _this3.logger.log('Connected!');
+        })["catch"](function (error) {
+          // EspLoader failed to connect. Clean it up so that we can try again later.
+          return loader.disconnect().then(function () {
+            // Re-throw original error.
+            throw error;
+          });
+        })["finally"](function () {
+          clearInterval(interval);
+        });
       });
+    }).then(function () {
+      if (options.listen) {
+        return _this3.hardReset().then(function () {
+          _this3.startListening();
+
+          return new Promise(function (resolve, reject) {
+            try {
+              var writeWaitingMessage = function writeWaitingMessage() {
+                return _this3.logger.log('Waiting for initial serial output from device...');
+              };
+
+              var intervals = [setInterval(writeWaitingMessage, 2000), setInterval(function () {
+                return _this3.logger.log('Try pressing BOOT button on device to reset manually.');
+              }, 5000)];
+
+              var onInitialMessage = function onInitialMessage() {
+                return done();
+              };
+
+              var done = function done() {
+                clearTimeout(timeout);
+                intervals.forEach(function (interval) {
+                  return clearInterval(interval);
+                });
+
+                _this3.removeListener('message', onInitialMessage);
+
+                resolve();
+              };
+
+              var timeout = setTimeout(function () {
+                return done(new Error('Timed-out while waiting for device serial output'));
+              }, 30000);
+
+              _this3.once('message', onInitialMessage);
+
+              writeWaitingMessage();
+            } catch (error) {
+              return reject(error);
+            }
+          });
+        });
+      }
     })["catch"](function (error) {
       var errorMessage = error instanceof Error ? error.message : error;
       throw new Error("Failed to connect to Bleskomat: ".concat(errorMessage));
@@ -298,7 +351,7 @@ module.exports = function () {
       var loader = _this4.loader;
 
       if (loader) {
-        _this4.logger.log('Disconnecting ESPTool loader...');
+        _this4.logger.log('Disconnecting EspLoader...');
 
         _this4.stopListening();
 
@@ -386,7 +439,7 @@ module.exports = function () {
         return partition;
       });
       return _this6.connect({
-        loader: true,
+        listen: false,
         reconnect: true
       }).then(function () {
         var loader = _this6.loader;
@@ -434,7 +487,7 @@ module.exports = function () {
 
     return Promise.resolve().then(function () {
       return _this7.connect({
-        loader: true,
+        listen: false,
         reconnect: true
       }).then(function () {
         var loader = _this7.loader; // The MD5 command works only when stub is loaded.
@@ -468,7 +521,7 @@ module.exports = function () {
     var _this8 = this;
 
     return Promise.resolve().then(function () {
-      _this8.logger.log('Initiating hard reset...');
+      _this8.logger.log('Attempting hard reset...');
 
       return _this8.getSerialPort({
         open: false
@@ -632,7 +685,7 @@ module.exports = function () {
   Serial.prototype.startListening = function () {
     var _this10 = this;
 
-    assert.ok(this.loader, 'ESPTool Loader not connected');
+    assert.ok(this.loader, 'EspLoader not connected');
     assert.ok(!this.listening, 'Already listening');
     var buffer = '';
     this.listening = {
