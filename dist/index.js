@@ -8971,7 +8971,7 @@ module.exports = function whichTypedArray(value) {
 },{"available-typed-arrays":18,"call-bind/callBound":22,"es-abstract/helpers/getOwnPropertyDescriptor":27,"foreach":29,"has-tostringtag/shams":35,"is-typed-array":41}],48:[function(require,module,exports){
 module.exports={
   "name": "bleskomat-web-serial",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Connect to a Bleskomat hardware device via WebSerial to listen to serial monitor, flash firmware, and verify md5 checksum.",
   "main": null,
   "private": true,
