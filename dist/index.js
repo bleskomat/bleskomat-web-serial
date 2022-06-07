@@ -114,8 +114,15 @@ module.exports = function () {
     flashBaudRate: 921600,
     flashSize: 8 * 1024 * 1024,
     logger: console,
-    productId: 0xea60,
-    vendorId: 0x10c4,
+    usbFilters: [{
+      productId: 0xea60,
+      vendorId: 0x10c4
+    }, // ESP32 Devkit, Bleskomat ATM PCB
+    {
+      productId: 0x55d4,
+      vendorId: 0x1a86
+    } // Lilygo TTGO T-Display
+    ],
     partitions: {
       bootloader: {
         name: 'bootloader',
@@ -149,14 +156,8 @@ module.exports = function () {
         return ports[0];
       }
 
-      var _this$options = _this.options,
-          productId = _this$options.productId,
-          vendorId = _this$options.vendorId;
       return navigator.serial.requestPort({
-        filters: [{
-          usbVendorId: vendorId,
-          usbProductId: productId
-        }]
+        filters: _this.options.usbFilters
       });
     });
   };
@@ -8971,7 +8972,7 @@ module.exports = function whichTypedArray(value) {
 },{"available-typed-arrays":18,"call-bind/callBound":22,"es-abstract/helpers/getOwnPropertyDescriptor":27,"foreach":29,"has-tostringtag/shams":35,"is-typed-array":41}],48:[function(require,module,exports){
 module.exports={
   "name": "bleskomat-web-serial",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Connect to a Bleskomat hardware device via WebSerial to listen to serial monitor, flash firmware, and verify md5 checksum.",
   "main": null,
   "private": true,
