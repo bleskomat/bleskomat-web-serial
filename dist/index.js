@@ -115,12 +115,12 @@ module.exports = function () {
     flashSize: 8 * 1024 * 1024,
     logger: console,
     usbFilters: [{
-      productId: 0xea60,
-      vendorId: 0x10c4
+      usbProductId: 0xea60,
+      usbVendorId: 0x10c4
     }, // ESP32 Devkit, Bleskomat ATM PCB
     {
-      productId: 0x55d4,
-      vendorId: 0x1a86
+      usbProductId: 0x55d4,
+      usbVendorId: 0x1a86
     } // Lilygo TTGO T-Display
     ],
     partitions: {
