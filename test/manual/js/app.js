@@ -79,13 +79,6 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	};
 
-	const downloadFile = function(name) {
-		return fetch('/firmware/' + encodeURIComponent(name), { method: 'GET' })
-			.then(response => response.blob())
-			.then(blob => blob.arrayBuffer())
-			.then(arrayBuffer => new Uint8Array(arrayBuffer));
-	};
-
 	buttons['flash'] && buttons['flash'].addEventListener('click', event => {
 		event.preventDefault();
 		return loadFirmwareFromFile().then(firmware => {

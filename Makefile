@@ -27,12 +27,12 @@ TEST=./test
 # (such as "all" below) isn't a file but instead a just label. Declaring
 # it as phony ensures that it always run, even if a file by the same name
 # exists.
-.PHONY: all\
+.PHONY: build\
 clean\
 partitionData\
 test
 
-all: partitionData\
+build: partitionData\
 $(DIST_INDEX_JS)\
 $(DIST_INDEX_MIN_JS)
 
@@ -74,7 +74,7 @@ $(EXPORTS)/partitionData/partitionsTable.bin
 
 partitionData: $(EXPORTS)/partitionData/index.js
 
-test:
+test: build
 	rm -rf $(PUBLIC)/test
 	mkdir -p $(PUBLIC)/test
 	cp -r $(TEST)/manual $(PUBLIC)/test/manual

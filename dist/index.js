@@ -8977,9 +8977,10 @@ module.exports={
   "main": null,
   "private": true,
   "scripts": {
-    "build": "make clean all",
+    "build": "make build",
+    "build:clean": "make clean build",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "test:manual": "npm run build && make test && ./node_modules/.bin/http-server ./public/test/manual"
+    "test:manual": "make test && ./node_modules/.bin/http-server ./public/test/manual"
   },
   "dependencies": {},
   "devDependencies": {
@@ -8990,6 +8991,7 @@ module.exports={
     "browserify": "17.0.0",
     "crypto-js": "4.1.1",
     "http-server": "14.1.0",
+    "puppeteer": "16.1.0",
     "uglify-js": "3.15.4"
   },
   "author": {

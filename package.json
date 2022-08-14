@@ -5,9 +5,11 @@
   "main": null,
   "private": true,
   "scripts": {
-    "build": "make clean all",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "test:manual": "npm run build && make test && ./node_modules/.bin/http-server ./public/test/manual"
+    "build": "make build",
+    "build:clean": "make clean build",
+    "test": "npm run build && npm run test:e2e",
+    "test:e2e": "./node_modules/.bin/mocha test/e2e/ --timeout 5000 --recursive --reporter spec --ui bdd --exit",
+    "test:manual": "make test && ./node_modules/.bin/http-server ./public/test/manual"
   },
   "dependencies": {},
   "devDependencies": {
@@ -17,7 +19,10 @@
     "babelify": "10.0.0",
     "browserify": "17.0.0",
     "crypto-js": "4.1.1",
+    "express": "4.18.1",
     "http-server": "14.1.0",
+    "mocha": "10.0.0",
+    "puppeteer": "16.1.0",
     "uglify-js": "3.15.4"
   },
   "author": {
