@@ -1,3 +1,23 @@
+/*
+ *  Copyright (C) 2022 Bleskomat s.r.o.
+ *  
+ *  Web:    https://www.bleskomat.com
+ *  Email:  info@bleskomat.com
+ *  
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *  
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *  
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.BleskomatWebSerial = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 (function (Buffer){(function (){
 "use strict";
@@ -8971,15 +8991,15 @@ module.exports = function whichTypedArray(value) {
 }).call(this)}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"available-typed-arrays":18,"call-bind/callBound":22,"es-abstract/helpers/getOwnPropertyDescriptor":27,"foreach":29,"has-tostringtag/shams":35,"is-typed-array":41}],48:[function(require,module,exports){
 module.exports={
-  "name": "bleskomat-web-serial",
-  "version": "1.3.2",
-  "description": "Connect to a Bleskomat hardware device via WebSerial to listen to serial monitor, flash firmware, and verify md5 checksum.",
+  "name": "@bleskomat/web-serial",
+  "version": "1.4.0",
+  "description": "JavaScript library to interact with Bleskomat hardware devices in the browser - flash firmware, listen to serial monitor, execute JSON-RPC commands.",
   "main": null,
-  "private": true,
   "scripts": {
     "build": "make build",
     "build:clean": "make clean build",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npm run build && npm run test:e2e",
+    "test:e2e": "./node_modules/.bin/mocha test/e2e/ --timeout 5000 --recursive --reporter spec --ui bdd --exit",
     "test:manual": "make test && ./node_modules/.bin/http-server ./public/test/manual"
   },
   "dependencies": {},
@@ -8990,7 +9010,9 @@ module.exports={
     "babelify": "10.0.0",
     "browserify": "17.0.0",
     "crypto-js": "4.1.1",
+    "express": "4.18.1",
     "http-server": "14.1.0",
+    "mocha": "10.0.0",
     "puppeteer": "16.1.0",
     "uglify-js": "3.15.4"
   },
@@ -9008,7 +9030,7 @@ module.exports={
     "type": "git",
     "url": "git+https://github.com/bleskomat/bleskomat-web-serial.git"
   },
-  "license": "UNLICENSED"
+  "license": "GPL-3.0"
 }
 
 },{}]},{},[8])(8)

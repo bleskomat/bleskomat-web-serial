@@ -6,9 +6,8 @@
 
 ## Variables
 BIN=./node_modules/.bin
+BUILD=./build
 DIST=./dist
-DIST_INDEX_JS=$(DIST)/index.js
-DIST_INDEX_MIN_JS=$(DIST)/index.min.js
 EXPORTS=./exports
 PUBLIC=./public
 TEST=./test
@@ -33,11 +32,12 @@ partitionData\
 test
 
 build: partitionData\
-$(DIST_INDEX_JS)\
-$(DIST_INDEX_MIN_JS)
+$(DIST)/index.js\
+$(DIST)/index.min.js
 
 clean:
 	# Delete build process output files:
+	rm -rf $(BUILD)
 	rm -rf $(DIST)
 	rm -f $(EXPORTS)/partitionData/index.js
 
@@ -46,7 +46,8 @@ DEPS_JS_FILES=node_modules/@toit/esptool.js/build/*.js\
 node_modules/crypto-js/core.js\
 node_modules/crypto-js/enc-base64.js\
 node_modules/crypto-js/md5.js
-$(DIST_INDEX_JS): lib/index.js $(EXPORTS_FILES) $(DEPS_JS_FILES)
+$(BUILD)/index.js: lib/index.js $(EXPORTS_FILES) $(DEPS_JS_FILES)
+	mkdir -p $(BUILD)
 	mkdir -p $$(dirname $@)
 	rm -f $@
 	$(BIN)/browserify \
@@ -55,9 +56,24 @@ $(DIST_INDEX_JS): lib/index.js $(EXPORTS_FILES) $(DEPS_JS_FILES)
 		--transform [ babelify --presets [ @babel/preset-env ] ] \
 		--outfile $@
 
-$(DIST_INDEX_MIN_JS): $(DIST_INDEX_JS)
+$(BUILD)/index.min.js: $(BUILD)/index.js
 	$(BIN)/uglifyjs $^ -o $@
 
+$(BUILD)/COPYRIGHT.js: COPYRIGHT
+	mkdir -p $(BUILD)
+	echo "/*" > $@
+	cat $^ | sed -e 's/^/ *  /' >> $@
+	echo "" >> $@
+	echo " *" >> $@
+	echo " */" >> $@
+
+$(DIST)/index.js: $(BUILD)/COPYRIGHT.js $(BUILD)/index.js
+	rm -rf $@
+	for input in $^; do cat $$input >> $@; done
+
+$(DIST)/index.min.js: $(BUILD)/COPYRIGHT.js $(BUILD)/index.min.js
+	rm -rf $@
+	for input in $^; do cat $$input >> $@; done
 
 $(EXPORTS)/partitionData/index.js: $(EXPORTS)/partitionData/bootloader.bin\
 $(EXPORTS)/partitionData/otaSlot.bin\

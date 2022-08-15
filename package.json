@@ -1,9 +1,9 @@
 {
-  "name": "bleskomat-web-serial",
-  "version": "1.3.2",
-  "description": "Connect to a Bleskomat hardware device via WebSerial to listen to serial monitor, flash firmware, and verify md5 checksum.",
-  "main": null,
+  "name": "@bleskomat/web-serial",
+  "version": "1.4.0",
   "private": true,
+  "description": "JavaScript library to interact with Bleskomat hardware devices in the browser - flash firmware, listen to serial monitor, execute JSON-RPC commands.",
+  "main": null,
   "scripts": {
     "build": "make build",
     "build:clean": "make clean build",
@@ -39,5 +39,5 @@
     "type": "git",
     "url": "git+https://github.com/bleskomat/bleskomat-web-serial.git"
   },
-  "license": "UNLICENSED"
+  "license": "GPL-3.0"
 }
