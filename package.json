@@ -1,7 +1,6 @@
 {
   "name": "@bleskomat/web-serial",
   "version": "1.4.0",
-  "private": true,
   "description": "JavaScript library to interact with Bleskomat hardware devices in the browser - flash firmware, listen to serial monitor, execute JSON-RPC commands.",
   "main": null,
   "scripts": {
