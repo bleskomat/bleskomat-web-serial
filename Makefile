@@ -68,10 +68,12 @@ $(BUILD)/COPYRIGHT.js: COPYRIGHT
 	echo " */" >> $@
 
 $(DIST)/index.js: $(BUILD)/COPYRIGHT.js $(BUILD)/index.js
+	mkdir -p $(DIST)
 	rm -rf $@
 	for input in $^; do cat $$input >> $@; done
 
 $(DIST)/index.min.js: $(BUILD)/COPYRIGHT.js $(BUILD)/index.min.js
+	mkdir -p $(DIST)
 	rm -rf $@
 	for input in $^; do cat $$input >> $@; done
 

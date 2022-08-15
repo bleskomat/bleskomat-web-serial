@@ -8993,6 +8993,7 @@ module.exports = function whichTypedArray(value) {
 module.exports={
   "name": "@bleskomat/web-serial",
   "version": "1.4.0",
+  "private": true,
   "description": "JavaScript library to interact with Bleskomat hardware devices in the browser - flash firmware, listen to serial monitor, execute JSON-RPC commands.",
   "main": null,
   "scripts": {
@@ -9004,17 +9005,17 @@ module.exports={
   },
   "dependencies": {},
   "devDependencies": {
-    "@babel/core": "7.17.10",
-    "@babel/preset-env": "7.17.10",
+    "@babel/core": "7.18.10",
+    "@babel/preset-env": "7.18.10",
     "@toit/esptool.js": "0.12.3",
     "babelify": "10.0.0",
     "browserify": "17.0.0",
     "crypto-js": "4.1.1",
     "express": "4.18.1",
-    "http-server": "14.1.0",
+    "http-server": "14.1.1",
     "mocha": "10.0.0",
     "puppeteer": "16.1.0",
-    "uglify-js": "3.15.4"
+    "uglify-js": "3.16.3"
   },
   "author": {
     "name": "Charles Hill",
