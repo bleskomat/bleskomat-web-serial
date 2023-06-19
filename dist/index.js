@@ -8897,7 +8897,7 @@ module.exports = function whichTypedArray(value) {
 },{"available-typed-arrays":18,"call-bind/callBound":22,"es-abstract/helpers/getOwnPropertyDescriptor":27,"foreach":29,"has-tostringtag/shams":35,"is-typed-array":41}],48:[function(require,module,exports){
 module.exports={
   "name": "@bleskomat/web-serial",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "JavaScript library to interact with Bleskomat hardware devices in the browser - flash firmware, listen to serial monitor, execute JSON-RPC commands.",
   "main": null,
   "scripts": {
