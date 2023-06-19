@@ -29,11 +29,8 @@ module.exports = Buffer;
 "use strict";
 
 var CryptoJS = require('crypto-js/core');
-
 require('crypto-js/enc-base64');
-
 require('crypto-js/md5');
-
 module.exports = CryptoJS;
 
 },{"crypto-js/core":24,"crypto-js/enc-base64":25,"crypto-js/md5":26}],3:[function(require,module,exports){
@@ -69,54 +66,34 @@ module.exports = require('util');
 "use strict";
 
 function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
-
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-function _iterableToArrayLimit(arr, i) { var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"]; if (_i == null) return; var _arr = []; var _n = true; var _d = false; var _s, _e; try { for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+function _iterableToArrayLimit(arr, i) { var _i = null == arr ? null : "undefined" != typeof Symbol && arr[Symbol.iterator] || arr["@@iterator"]; if (null != _i) { var _s, _e, _x, _r, _arr = [], _n = !0, _d = !1; try { if (_x = (_i = _i.call(arr)).next, 0 === i) { if (Object(_i) !== _i) return; _n = !1; } else for (; !(_n = (_s = _x.call(_i)).done) && (_arr.push(_s.value), _arr.length !== i); _n = !0); } catch (err) { _d = !0, _e = err; } finally { try { if (!_n && null != _i["return"] && (_r = _i["return"](), Object(_r) !== _r)) return; } finally { if (_d) throw _e; } } return _arr; } }
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-
 var assert = require('../exports/assert');
-
 var Buffer = require('../exports/Buffer');
-
 var CryptoJS = require('../exports/CryptoJS');
-
 var esptool = require('../exports/esptool');
-
 var EventEmitter = require('../exports/events');
-
 var partitionData = function () {
   var data = {};
-
   var partitionDataBase64 = require('../exports/partitionData');
-
   Object.entries(partitionDataBase64).forEach(function (_ref, index) {
     var _ref2 = _slicedToArray(_ref, 2),
-        name = _ref2[0],
-        dataBase64 = _ref2[1];
-
+      name = _ref2[0],
+      dataBase64 = _ref2[1];
     data[name] = new Uint8Array(Buffer.from(dataBase64, 'base64'));
   });
   return data;
 }();
-
 var util = require('../exports/util');
-
 var _require = require('../package.json'),
-    version = _require.version;
-
+  version = _require.version;
 var clientIncrement = 0;
-
 module.exports = function () {
   var EspLoader = esptool.EspLoader;
-
   var Serial = function Serial(options) {
     this.options = Object.assign({}, this.defaultOptions, options || {});
     this.port = null;
@@ -126,7 +103,6 @@ module.exports = function () {
     this.clientId = ['client', ++clientIncrement].join('-');
     this.cmdIncrement = 0;
   };
-
   util.inherits(Serial, EventEmitter);
   Serial.prototype.defaultOptions = {
     baudRate: 115200,
@@ -137,12 +113,14 @@ module.exports = function () {
     usbFilters: [{
       usbProductId: 0xea60,
       usbVendorId: 0x10c4
-    }, // ESP32 Devkit, Bleskomat ATM PCB
+    },
+    // ESP32 Devkit, Bleskomat ATM PCB
     {
       usbProductId: 0x55d4,
       usbVendorId: 0x1a86
     } // Lilygo TTGO T-Display
     ],
+
     partitions: {
       bootloader: {
         name: 'bootloader',
@@ -166,54 +144,44 @@ module.exports = function () {
       jsonrpc: '2.0'
     }
   };
-
   Serial.prototype.requestSerialPort = function () {
     var _this = this;
-
     this.logger.log('Requesting serial port access...');
     return navigator.serial.getPorts().then(function (ports) {
       if (ports.length > 0) {
         return ports[0];
       }
-
       return navigator.serial.requestPort({
         filters: _this.options.usbFilters
       });
     });
   };
-
   Serial.prototype.getSerialPort = function (options) {
     var _this2 = this;
-
     return Promise.resolve().then(function () {
       options = Object.assign({
         open: true
       }, options || {});
       return Promise.resolve().then(function () {
         var port = _this2.port;
-
         if (!port) {
           return _this2.requestSerialPort();
-        } // Port already exists.
-
-
+        }
+        // Port already exists.
         return port;
       }).then(function (port) {
         if (port && options.open) {
           // Port found and we want to open it.
           var baudRate = _this2.options.baudRate;
-
           _this2.logger.log('Opening serial port...');
-
           return port.open({
             baudRate: baudRate
           })["catch"](function (error) {
             if (/port is already open/i.test(error.message)) {
               // Ignore port already open error.
               return port;
-            } // Re-throw any other error.
-
-
+            }
+            // Re-throw any other error.
             throw error;
           }).then(function () {
             if (port.readable === null) {
@@ -228,46 +196,36 @@ module.exports = function () {
                       return port;
                     });
                   }
-
                   return null;
                 });
               });
             }
-
             return port;
           }).then(function (port) {
             if (port) {
               port.addEventListener('disconnect', function () {
                 _this2.logger.log('Device disconnected');
-
                 _this2.disconnect()["catch"](_this2.logger.error);
               });
             }
-
             return port;
           });
         }
-
         return port;
       });
     }).then(function (port) {
       _this2.port = port || null;
       return port;
     });
-    ;
   };
-
   Serial.prototype.connect = function (options) {
     var _this3 = this;
-
     return Promise.resolve().then(function () {
       options = Object.assign({
-        listen: true,
-        reconnect: false
+        bootloader: false
       }, options || {});
-      assert.ok(!_this3.connected || options.reconnect, 'Already connected');
       return Promise.resolve().then(function () {
-        if (options.reconnect) {
+        if (options.bootloader) {
           // Disconnect if already connected.
           return _this3.disconnect();
         }
@@ -278,152 +236,141 @@ module.exports = function () {
       }).then(function (port) {
         assert.ok(port, 'Device not found');
         assert.notStrictEqual(port.readable, null, 'Device port not readable');
-        var _this3$options = _this3.options,
-            flashSize = _this3$options.flashSize,
-            debug = _this3$options.debug;
-        var logger = _this3.logger;
-        var loader = new EspLoader(port, {
-          flashSize: flashSize,
-          debug: debug,
-          logger: logger
-        });
-
-        _this3.logger.log('Connecting EspLoader...');
-
-        var interval = setInterval(function () {
-          _this3.logger.log('Try to press and hold the FLASH/EN/RST button on the device. Then press and release the BOOT button.');
-        }, 5000);
-        return loader.connect().then(function () {
-          return loader.chipName().then(function (chipName) {
-            _this3.logger.log("Chip Name: \"".concat(chipName, "\""));
-          });
-        }).then(function () {
-          return loader.macAddr().then(function (macAddr) {
-            _this3.logger.log("Mac Address: \"".concat(macAddr, "\""));
-          });
-        }).then(function () {
-          _this3.loader = loader;
-          _this3.connected = true;
-
+        if (options.bootloader) {
+          return _this3.initializeBootloader();
+        }
+        _this3.startListening();
+        return _this3.waitForJsonRpc().then(function () {
           _this3.logger.log('Connected!');
-        })["catch"](function (error) {
-          // EspLoader failed to connect. Clean it up so that we can try again later.
-          return loader.disconnect().then(function () {
-            // Re-throw original error.
-            throw error;
-          });
-        })["finally"](function () {
-          clearInterval(interval);
         });
       });
     }).then(function () {
-      if (options.listen) {
-        return _this3.hardReset().then(function () {
-          _this3.startListening();
-
-          return new Promise(function (resolve, reject) {
-            try {
-              var writeWaitingMessage = function writeWaitingMessage() {
-                return _this3.logger.log('Waiting for initial serial output from device...');
-              };
-
-              var intervals = [setInterval(writeWaitingMessage, 2000), setInterval(function () {
-                return _this3.logger.log('Try pressing BOOT button on device to reset manually.');
-              }, 5000)];
-
-              var onInitialMessage = function onInitialMessage() {
-                return done();
-              };
-
-              var done = function done() {
-                clearTimeout(timeout);
-                intervals.forEach(function (interval) {
-                  return clearInterval(interval);
-                });
-
-                _this3.removeListener('message', onInitialMessage);
-
-                resolve();
-              };
-
-              var timeout = setTimeout(function () {
-                return done(new Error('Timed-out while waiting for device serial output'));
-              }, 30000);
-
-              _this3.once('message', onInitialMessage);
-
-              writeWaitingMessage();
-            } catch (error) {
-              return reject(error);
-            }
-          });
-        });
-      }
+      _this3.connected = true;
     })["catch"](function (error) {
       var errorMessage = error instanceof Error ? error.message : error;
       throw new Error("Failed to connect to Bleskomat: ".concat(errorMessage));
     });
   };
-
-  Serial.prototype.disconnect = function () {
+  Serial.prototype.initializeBootloader = function () {
     var _this4 = this;
-
     return Promise.resolve().then(function () {
-      var loader = _this4.loader;
-
+      var _this4$options = _this4.options,
+        flashSize = _this4$options.flashSize,
+        debug = _this4$options.debug;
+      var logger = _this4.logger,
+        port = _this4.port;
+      var loader = new EspLoader(port, {
+        flashSize: flashSize,
+        debug: debug,
+        logger: logger
+      });
+      _this4.logger.log('Initializing bootloader...');
+      var interval = setInterval(function () {
+        _this4.logger.log('Try to press and hold the FLASH/EN/RST button on the device. Then press and release the BOOT button.');
+      }, 5000);
+      return loader.connect().then(function () {
+        return loader.chipName().then(function (chipName) {
+          _this4.logger.log("Chip Name: \"".concat(chipName, "\""));
+        });
+      }).then(function () {
+        return loader.macAddr().then(function (macAddr) {
+          _this4.logger.log("Mac Address: \"".concat(macAddr, "\""));
+        });
+      }).then(function () {
+        _this4.loader = loader;
+        _this4.logger.log('Bootloader initialized!');
+      })["catch"](function (error) {
+        // EspLoader failed to connect. Clean it up so that we can try again later.
+        return loader.disconnect().then(function () {
+          // Re-throw original error.
+          throw error;
+        });
+      })["finally"](function () {
+        clearInterval(interval);
+      });
+    });
+  };
+  Serial.prototype.waitForJsonRpc = function (options) {
+    var _this5 = this;
+    return Promise.resolve().then(function () {
+      options = Object.assign({
+        timeout: 20000
+      }, options || {});
+      _this5.logger.log('Waiting for JSON-RPC over serial interface...');
+      return new Promise(function (resolve, reject) {
+        try {
+          var intervals = [setInterval(function () {
+            bleskomat.cmd('echo', ['ping'], {
+              timeout: 500
+            }).then(function () {
+              return done();
+            })["catch"](function (error) {
+              // Ignore error.
+            });
+          }, 800), setInterval(function () {
+            return _this5.logger.log('Try pressing BOOT button on device.');
+          }, 5000)];
+          var done = function done(error) {
+            clearTimeout(timeout);
+            intervals.forEach(function (interval) {
+              return clearInterval(interval);
+            });
+            if (error) return reject(error);
+            resolve();
+          };
+          var timeout = setTimeout(function () {
+            done(new Error('Timed-out while waiting for JSON-RPC over serial interface'));
+          }, options.timeout);
+        } catch (error) {
+          return reject(error);
+        }
+      });
+    });
+  };
+  Serial.prototype.disconnect = function () {
+    var _this6 = this;
+    return Promise.resolve().then(function () {
+      _this6.stopListening();
+      var loader = _this6.loader;
       if (loader) {
-        _this4.logger.log('Disconnecting EspLoader...');
-
-        _this4.stopListening();
-
-        _this4.loader = null;
+        _this6.logger.log('Disconnecting...');
+        _this6.loader = null;
         return loader.disconnect();
       }
     }).then(function () {
-      var port = _this4.port;
-
+      var port = _this6.port;
       if (port) {
-        _this4.logger.log('Closing serial port...');
-
-        _this4.port = null;
+        _this6.logger.log('Closing serial port...');
+        _this6.port = null;
         return port.close();
       }
     })["finally"](function () {
-      _this4.connected = false;
+      _this6.connected = false;
     });
   };
-
   Serial.prototype.flash = function (firmware) {
-    var _this5 = this;
-
+    var _this7 = this;
     return Promise.resolve().then(function () {
-      var partitions = _this5.preparePartitions(firmware);
-
-      return _this5.writePartitions(partitions);
+      var partitions = _this7.preparePartitions(firmware);
+      return _this7.writePartitions(partitions);
     });
   };
-
   Serial.prototype.preparePartitions = function (firmware) {
     assert.ok(firmware, 'Missing required argument: "firmware"');
-
     if (typeof firmware === 'string') {
       firmware = Buffer.from(firmware, 'base64');
     }
-
     if (firmware instanceof Buffer) {
       firmware = new Uint8Array(firmware);
     }
-
     assert.ok(firmware instanceof Uint8Array, 'Invalid argument ("firmware"): Uint8Array, Buffer, or base64-encoded string expected');
     return Object.entries(this.options.partitions).map(function (_ref3, index) {
       var _ref4 = _slicedToArray(_ref3, 2),
-          key = _ref4[0],
-          partition = _ref4[1];
-
+        key = _ref4[0],
+        partition = _ref4[1];
       var name = partition.name,
-          offset = partition.offset;
+        offset = partition.offset;
       var data;
-
       if (key === 'firmware') {
         // Use firmware binary data provided when calling this function.
         data = firmware;
@@ -431,7 +378,6 @@ module.exports = function () {
         // Every other partition has fixed binary data.
         data = partitionData[key];
       }
-
       return {
         data: data,
         name: name,
@@ -439,18 +385,16 @@ module.exports = function () {
       };
     });
   };
-
   Serial.prototype.writePartitions = function (partitions) {
-    var _this6 = this;
-
+    var _this8 = this;
     return Promise.resolve().then(function () {
       assert.ok(partitions, 'Missing required argument: "partitions"');
       assert.ok(partitions instanceof Array, 'Invalid argument ("partitions"): Array expected');
       partitions = partitions.map(function (partition) {
         assert.strictEqual(_typeof(partition), 'object', 'Invalid argument ("partitions"): Array of objects expected');
         var data = partition.data,
-            name = partition.name,
-            offset = partition.offset;
+          name = partition.name,
+          offset = partition.offset;
         assert.ok(name, 'Missing required partition property: "name"');
         assert.strictEqual(_typeof(name), 'string', 'Invalid partition property ("name"): String expected');
         assert.ok(data, 'Missing required partition property: "data"');
@@ -459,92 +403,75 @@ module.exports = function () {
         assert.ok(Number.isInteger(offset), 'Invalid partition property ("offset"): Integer expected');
         return partition;
       });
-      return _this6.connect({
-        listen: false,
-        reconnect: true
+      return _this8.connect({
+        bootloader: true
       }).then(function () {
-        var loader = _this6.loader;
+        var loader = _this8.loader;
         return loader.loadStub().then(function () {
-          var _this6$options = _this6.options,
-              baudRate = _this6$options.baudRate,
-              flashBaudRate = _this6$options.flashBaudRate;
+          var _this8$options = _this8.options,
+            baudRate = _this8$options.baudRate,
+            flashBaudRate = _this8$options.flashBaudRate;
           return loader.setBaudRate(baudRate, flashBaudRate);
         }).then(function () {
-          _this6.logger.log('Flashing device...');
-
-          return _this6.promiseAllSeries(partitions.map(function (partition) {
+          _this8.logger.log('Flashing device...');
+          return _this8.promiseAllSeries(partitions.map(function (partition) {
             return function () {
               var data = partition.data,
-                  name = partition.name,
-                  offset = partition.offset;
-
-              _this6.logger.log("Writing partition: ".concat(name));
-
+                name = partition.name,
+                offset = partition.offset;
+              _this8.logger.log("Writing partition: ".concat(name));
               return loader.flashData(data, offset, function (blockIndex, totalBlocks) {
                 var blockNumber = blockIndex + 1;
-
-                _this6.logger.log("".concat(name, ": Writing block ").concat(blockNumber, " of ").concat(totalBlocks));
+                _this8.logger.log("".concat(name, ": Writing block ").concat(blockNumber, " of ").concat(totalBlocks));
               }).then(function () {
-                return _this6.wait(100);
+                return _this8.wait(100);
               });
             };
           })).then(function () {
-            _this6.logger.log('Successfully wrote device partitions');
-
-            return _this6.hardReset().then(function () {
-              return _this6.disconnect();
+            _this8.logger.log('Successfully wrote device partitions');
+            return _this8.hardReset().then(function () {
+              return _this8.disconnect();
             });
           });
         });
       });
     });
   };
-
   var ESP_SPI_FLASH_MD5 = 0x13;
   var MD5_TIMEOUT_PER_MB = 8; // timeout (per megabyte) for calculating md5sum
-
   Serial.prototype.calculateFlashMD5Sum = function (addr, size) {
-    var _this7 = this;
-
+    var _this9 = this;
     return Promise.resolve().then(function () {
-      return _this7.connect({
-        listen: false,
-        reconnect: true
+      return _this9.connect({
+        bootloader: true
       }).then(function () {
-        var loader = _this7.loader; // The MD5 command works only when stub is loaded.
-
+        var loader = _this9.loader;
+        // The MD5 command works only when stub is loaded.
         return loader.loadStub().then(function () {
           var opcode = ESP_SPI_FLASH_MD5;
-
-          var buffer = _this7.pack('<IIII', addr, size, 0, 0);
-
+          var buffer = _this9.pack('<IIII', addr, size, 0, 0);
           var checksum = 0;
-
-          var timeout = _this7.timeoutPerMb(MD5_TIMEOUT_PER_MB, size); // The MD5 command returns additional bytes in the standard command reply slot.
-
-
+          var timeout = _this9.timeoutPerMb(MD5_TIMEOUT_PER_MB, size);
+          // The MD5 command returns additional bytes in the standard command reply slot.
           return loader.checkCommand(opcode, buffer, checksum, timeout).then(function (result) {
             result = result.splice(0, 16);
             return Buffer.from(result).toString('hex');
           });
         });
       }).then(function (result) {
-        return _this7.hardReset().then(function () {
-          return _this7.disconnect();
+        return _this9.hardReset().then(function () {
+          return _this9.disconnect();
         }).then(function () {
           return result;
         });
       });
     });
   };
-
   Serial.prototype.hardReset = function () {
-    var _this8 = this;
-
+    var _this10 = this;
     return Promise.resolve().then(function () {
-      _this8.logger.log('Attempting hard reset...');
-
-      return _this8.getSerialPort({
+      _this10.logger.log('Attempting hard reset...');
+      return _this10.getSerialPort({
         open: false
       }).then(function (port) {
         return port.setSignals({
@@ -559,19 +486,18 @@ module.exports = function () {
       });
     });
   };
-
   Serial.prototype.wait = function (delay) {
     return new Promise(function (resolve) {
       setTimeout(resolve, delay);
     });
-  }; // `promiseFactories` is an array of functions that return promises. Example usage:
+  };
+
+  // `promiseFactories` is an array of functions that return promises. Example usage:
   // 		promiseAllSeries(things.map(thing => {
   // 			return function() {
   // 				return wait(1000).then(() => { console.log({thing}); });
   // 			};
   // 		}));
-
-
   Serial.prototype.promiseAllSeries = function (promiseFactories) {
     var result = Promise.resolve();
     promiseFactories.forEach(function (promiseFactory) {
@@ -579,31 +505,23 @@ module.exports = function () {
     });
     return result;
   };
-
   var DEFAULT_TIMEOUT = 3000;
-
   Serial.prototype.timeoutPerMb = function (secondsPerMb, sizeBytes) {
     var result = Math.floor(secondsPerMb * (sizeBytes / 0x1e6));
-
     if (result < DEFAULT_TIMEOUT) {
       return DEFAULT_TIMEOUT;
     }
-
     return result;
   };
-
   Serial.prototype.pack = function (format) {
     var pointer = 0;
-
     for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
       args[_key - 1] = arguments[_key];
     }
-
     var data = args;
     assert.strictEqual(format.replace(/[<>]/, "").length, data.length, 'Pack format to argument count mismatch');
     var bytes = [];
     var littleEndian = true;
-
     for (var i = 0; i < format.length; i++) {
       if (format[i] === '<') {
         littleEndian = true;
@@ -622,7 +540,6 @@ module.exports = function () {
         throw new Error('Unhandled character in pack format');
       }
     }
-
     function pushBytes(value, byteCount) {
       for (var _i2 = 0; _i2 < byteCount; _i2++) {
         if (littleEndian) {
@@ -632,13 +549,10 @@ module.exports = function () {
         }
       }
     }
-
     return Uint8Array.from(bytes);
   };
-
   Serial.prototype.cmd = function (method, params, options) {
-    var _this9 = this;
-
+    var _this11 = this;
     return Promise.resolve().then(function () {
       assert.ok(method, 'Missing required argument: "method"');
       assert.strictEqual(_typeof(method), 'string', 'Invalid argument ("method"): String expected');
@@ -647,107 +561,98 @@ module.exports = function () {
       options = Object.assign({
         timeout: 500
       }, options || {});
-      var port = _this9.port;
+      var port = _this11.port;
       assert.ok(port && port.writable, 'Device not connected');
       assert.ok(!port.writable.locked, 'Device is busy');
       var writer = port.writable.getWriter();
-      var id = [_this9.clientId, 'cmd', ++_this9.cmdIncrement].join('-');
-      var _this9$options$cmd = _this9.options.cmd,
-          delimiter = _this9$options$cmd.delimiter,
-          jsonrpc = _this9$options$cmd.jsonrpc;
+      var id = [_this11.clientId, 'cmd', ++_this11.cmdIncrement].join('-');
+      var _this11$options$cmd = _this11.options.cmd,
+        delimiter = _this11$options$cmd.delimiter,
+        jsonrpc = _this11$options$cmd.jsonrpc;
       var message = JSON.stringify({
         id: id,
         method: method,
         params: params,
         jsonrpc: jsonrpc
       });
-
-      _this9.logger.log("Sending JSON-RPC message: '".concat(message, "'"));
-
+      _this11.logger.log("Sending JSON-RPC message: '".concat(message, "'"));
       writer.write(Buffer.from("".concat(message).concat(delimiter), 'utf8'));
       writer.releaseLock();
       return new Promise(function (resolve, reject) {
         try {
           var done = function done(error, result) {
             clearTimeout(timeout);
-
-            _this9.removeListener('message', onMessage);
-
+            _this11.removeListener('message', onMessage);
             if (error) return reject(error);
             resolve(result);
           };
-
           var timeout = setTimeout(function () {
             done(new Error('Timed-out while waiting for JSON-RPC response'));
           }, options.timeout);
-
           var onMessage = function onMessage(message) {
             var json;
-
             try {
               json = JSON.parse(message);
-            } catch (error) {// Ignore JSON parsing errors.
+            } catch (error) {
+              // Ignore JSON parsing errors.
             }
-
             if (json && json.id && json.id === id) {
               if (json.error) return done(new Error(JSON.stringify(json.error)));
               return done(null, json.result || null);
             }
           };
-
-          _this9.on('message', onMessage);
+          _this11.on('message', onMessage);
         } catch (error) {
           return reject(error);
         }
       });
     });
   };
-
   Serial.prototype.startListening = function () {
-    var _this10 = this;
-
-    assert.ok(this.loader, 'EspLoader not connected');
+    var _this12 = this;
     assert.ok(!this.listening, 'Already listening');
+    var port = this.port;
+    assert.ok(port, 'Serial port not found');
+    assert.ok(port.readable, 'Serial port is not readable');
     var buffer = '';
+    var reader = port.readable.getReader();
     this.listening = {
-      unlisten: this.loader.reader.listen(),
       interval: setInterval(function () {
-        var data = _this10.loader.reader.buffer.view(true);
-
-        if (data && data.length > 0) {
-          buffer += Buffer.from(data).toString('utf8');
-
-          if (buffer) {
-            var pos;
-
-            while ((pos = buffer.indexOf('\r\n')) !== -1) {
-              var message = buffer.substr(0, pos);
-
-              _this10.emit('message', message);
-
-              buffer = buffer.substr(pos + '\r\n'.length);
+        reader.read().then(function (_ref5) {
+          var value = _ref5.value,
+            done = _ref5.done;
+          if (value && value.length > 0) {
+            buffer += Buffer.from(value).toString('utf8');
+            if (buffer) {
+              var pos;
+              while ((pos = buffer.indexOf('\r\n')) !== -1) {
+                var message = buffer.substr(0, pos);
+                _this12.emit('message', message);
+                buffer = buffer.substr(pos + '\r\n'.length);
+              }
             }
           }
-        }
-      }, 20)
+          if (done) {
+            reader.releaseLock();
+          }
+        });
+      }, 20),
+      reader: reader
     };
   };
-
   Serial.prototype.stopListening = function () {
     if (this.listening) {
       var _this$listening = this.listening,
-          unlisten = _this$listening.unlisten,
-          interval = _this$listening.interval;
-      unlisten();
+        interval = _this$listening.interval,
+        reader = _this$listening.reader;
       clearInterval(interval);
+      reader && reader.releaseLock();
       this.listening = null;
     }
   };
-
   var md5sum = Serial.md5sum = function (firmwareStringBase64) {
     return CryptoJS.MD5(CryptoJS.enc.Base64.parse(firmwareStringBase64)).toString();
   };
-
   Serial.assert = assert;
   Serial.Buffer = Buffer;
   Serial.CryptoJS = CryptoJS;
@@ -8993,7 +8898,6 @@ module.exports = function whichTypedArray(value) {
 module.exports={
   "name": "@bleskomat/web-serial",
   "version": "1.4.0",
-  "private": true,
   "description": "JavaScript library to interact with Bleskomat hardware devices in the browser - flash firmware, listen to serial monitor, execute JSON-RPC commands.",
   "main": null,
   "scripts": {
@@ -9003,19 +8907,18 @@ module.exports={
     "test:e2e": "./node_modules/.bin/mocha test/e2e/ --timeout 5000 --recursive --reporter spec --ui bdd --exit",
     "test:manual": "make test && ./node_modules/.bin/http-server ./public/test/manual"
   },
-  "dependencies": {},
   "devDependencies": {
-    "@babel/core": "7.18.10",
-    "@babel/preset-env": "7.18.10",
+    "@babel/core": "7.22.5",
+    "@babel/preset-env": "7.22.5",
     "@toit/esptool.js": "0.12.3",
     "babelify": "10.0.0",
     "browserify": "17.0.0",
     "crypto-js": "4.1.1",
-    "express": "4.18.1",
+    "express": "4.18.2",
     "http-server": "14.1.1",
-    "mocha": "10.0.0",
-    "puppeteer": "16.1.0",
-    "uglify-js": "3.16.3"
+    "mocha": "10.2.0",
+    "puppeteer": "19.11.1",
+    "uglify-js": "3.17.4"
   },
   "author": {
     "name": "Charles Hill",

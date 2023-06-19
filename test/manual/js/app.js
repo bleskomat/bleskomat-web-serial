@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	buttons['connect'] && buttons['connect'].addEventListener('click', event => {
 		event.preventDefault();
-		bleskomat.connect().catch(logger.error);
+		bleskomat.connect({ bootloader: false }).catch(logger.error);
 	});
 
 	const loadFirmwareFromFile = function() {

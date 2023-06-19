@@ -10,19 +10,18 @@
     "test:e2e": "./node_modules/.bin/mocha test/e2e/ --timeout 5000 --recursive --reporter spec --ui bdd --exit",
     "test:manual": "make test && ./node_modules/.bin/http-server ./public/test/manual"
   },
-  "dependencies": {},
   "devDependencies": {
-    "@babel/core": "7.18.10",
-    "@babel/preset-env": "7.18.10",
+    "@babel/core": "7.22.5",
+    "@babel/preset-env": "7.22.5",
     "@toit/esptool.js": "0.12.3",
     "babelify": "10.0.0",
     "browserify": "17.0.0",
     "crypto-js": "4.1.1",
-    "express": "4.18.1",
+    "express": "4.18.2",
     "http-server": "14.1.1",
-    "mocha": "10.0.0",
-    "puppeteer": "16.1.0",
-    "uglify-js": "3.16.3"
+    "mocha": "10.2.0",
+    "puppeteer": "19.11.1",
+    "uglify-js": "3.17.4"
   },
   "author": {
     "name": "Charles Hill",
